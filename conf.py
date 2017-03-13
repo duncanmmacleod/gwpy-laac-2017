@@ -288,7 +288,8 @@ intersphinx_mapping = {
     'pycbc': ('https://ligo-cbc.github.io/pycbc/latest/html/', None),
     'root_numpy': ('https://rootpy.github.io/root_numpy/', None),
     'h5py': ('http://docs.h5py.org/en/latest/', None),
-    'gwpy': ('https://gwpy.github.io/docs/latest/', None),
+    'gwpy': ('https://gwpy.github.io/docs/latest/', 'gwpy.inv'),
+    'trigfind': ('https://ldas-jobs.ligo.caltech.edu/~duncan.macleod/trigfind/latest/', 'trigfind.inv'),
 }
 
 # -- Extensions ----------------------------------------------------------

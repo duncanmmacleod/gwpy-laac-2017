@@ -13,7 +13,9 @@ The key features of GWpy are:
 In this tutorial, we introduce the basic functionality of GWpy and how it might be used to simplify data processing in a wide variety of applications.
 
 .. toctree::
+   :maxdepth: 2
 
+   prep
    data
    tables
    segments

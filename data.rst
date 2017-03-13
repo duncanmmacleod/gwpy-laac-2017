@@ -1,10 +1,17 @@
 .. currentmodule:: gwpy.timeseries
+.. sectionauthor:: Duncan Macleod <duncan.macleod@ligo.org>
+
+.. _data:
 
 ################################
 Working with interferometer data
 ################################
 
 **Primary documentation:** https://gwpy.github.io/docs/latest/timeseries/
+
+The primary record of gravitational-wave observatory (GWO) experiments is a time stream of strain amplitude in which we hope to find gravitational wave signals.
+
+GWpy provides the :class:`~gwpy.timeseries.TimeSeries` class to represent some time-domain data:
 
 .. plot::
    :include-source:
@@ -13,7 +20,9 @@ Working with interferometer data
 
    >>> from gwpy.timeseries import TimeSeries
 
-GWpy provides the :class:`~gwpy.timeseries.TimeSeries` class to represent some time-domain data.
+**References:**
+
+- :all:`gwpy-timeseries`
 
 ==============
 Accessing data
@@ -61,6 +70,12 @@ The above :meth:`~TimeSeries.get` should return a TimeSeries that looks like::
               name: H1:GDS-CALIB_STRAIN,
               channel: H1:GDS-CALIB_STRAIN)
 
+**References:**
+
+- :all:`gwpy-timeseries-remote`
+- :all:`gwpy-timeseries-ldg`
+- :all:`gwpy-timeseries-io`
+
 =============
 Plotting data
 =============
@@ -96,6 +111,10 @@ and then we call :meth:`~gwpy.plotter.Plot.show` to display the figure (interact
 Alternatively, we could call :meth:`~gwpy.plotter.Plot.save` to save the figure to a file::
 
    >>> plot.save('h1-strain.png')
+
+**References:**
+
+- :all:`gwpy-timeseries-plot`
 
 ==============================================
 Generating an ASD (amplitude spectral density)
@@ -246,6 +265,10 @@ We can try and overlay our two cleaned `TimeSeries` to see if the signals match 
    >>> ax.set_ylabel('Amplitude [strain]')
    >>> ax.legend()
    >>> plot.show()
+
+**References:**
+
+- :all:`gwpy-signal-time-domain-filter`
 
 =======================
 Generating Q-transforms
