@@ -6,7 +6,7 @@ Getting set up
 Installing GWpy
 ===============
 
-To install GWpy, please see :all:`install`.
+To install GWpy, please see :any:`gwpy-install`.
 
 If you are working on the LIGO Data Grid sites at CIT, LHO, or LLO, you can use the `GWpySoft <https://wiki.ligo.org/DetChar/GWpySoft>`_ virtualenv, which provides the latest release of GWpy (or newer) and any other dependencies that go beyond what is available as standard on that system.
 

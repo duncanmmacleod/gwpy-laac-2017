@@ -22,7 +22,7 @@ GWpy provides the :class:`~gwpy.timeseries.TimeSeries` class to represent some t
 
 **References:**
 
-- :all:`gwpy-timeseries`
+- :any:`gwpy-timeseries`
 
 ==============
 Accessing data
@@ -72,9 +72,9 @@ The above :meth:`~TimeSeries.get` should return a TimeSeries that looks like::
 
 **References:**
 
-- :all:`gwpy-timeseries-remote`
-- :all:`gwpy-timeseries-ldg`
-- :all:`gwpy-timeseries-io`
+- :any:`gwpy-timeseries-remote`
+- :any:`gwpy-timeseries-ldg`
+- :any:`gwpy-timeseries-io`
 
 =============
 Plotting data
@@ -114,7 +114,7 @@ Alternatively, we could call :meth:`~gwpy.plotter.Plot.save` to save the figure 
 
 **References:**
 
-- :all:`gwpy-timeseries-plot`
+- :any:`gwpy-timeseries-plot`
 
 ==============================================
 Generating an ASD (amplitude spectral density)
@@ -268,7 +268,7 @@ We can try and overlay our two cleaned `TimeSeries` to see if the signals match 
 
 **References:**
 
-- :all:`gwpy-signal-time-domain-filter`
+- :any:`gwpy-signal-time-domain-filter`
 
 =======================
 Generating Q-transforms

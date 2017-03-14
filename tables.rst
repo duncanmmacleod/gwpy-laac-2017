@@ -20,6 +20,13 @@ GWpy provides the `Table` and `EventTable` classes to represent tabular data:
 
    >>> from gwpy.table import (Table, EventTable)
 
+.. plot::
+   :include-source: False
+   :context:
+   :nofigs:
+
+   from gwpy.plotter import EventTablePlot
+
 .. note::
 
    The `Table` object is just an import of :class:`astropy.table.Table`,
@@ -28,7 +35,7 @@ GWpy provides the `Table` and `EventTable` classes to represent tabular data:
 
 **References:**
 
-- :all:`gwpy-table`
+- :any:`gwpy-table`
 
 ===================
 Finding event files
@@ -45,14 +52,9 @@ A subset of event trigger generators (ETGs) are linked to `trigfind`, so you can
 
    >>> from gwpy.time import tconvert
    >>> from trigfind import find_trigger_files
-   >>> files = find_trigger_files('L1:GDS-CALIB_STRAIN', 'omicron', tconvert('Sep 14 2015'), tconvert('Sep 15 2015'))
+   >>> files = find_trigger_files('L1:GDS-CALIB_STRAIN', 'omicron', tconvert('Jan 4 2017'), tconvert('Jan 5 2017'))
 
-From this you should get a (long) list of files, something like::
-
-   >>> print(files)
-   FIXME FIXME FIXME FIXME FIXME
-   ... 
-   FIXME FIXME FIXME FIXME FIXME
+From this you should get a (long) list of files (84).
 
 As of March 2017, the following ETGs are understood by `trigfind`:
 
@@ -103,11 +105,28 @@ For all ``LIGO_LW`` tables the format should be given as ``ligolw.<tablename>``,
 The above :meth:`~EventTable.read` should return a table that looks like::
 
    >>> print(events)
-   FIXME FIXME FIXME
+ifo peak_time  peak_time_ns ... chisq_dof param_one_name param_one_value
+--- ---------- ------------ ... --------- -------------- ---------------
+ L1 1167532167    500000000 ...       0.0          phase         -1.5602
+ L1 1167532173    194274902 ...       0.0          phase         2.74404
+ L1 1167532174    176757097 ...       0.0          phase         1.46188
+ L1 1167532176    195434093 ...       0.0          phase         0.99987
+ L1 1167532176    511229991 ...       0.0          phase         3.11095
+ L1 1167532181    120666027 ...       0.0          phase        -0.71677
+ L1 1167532182    162108898 ...       0.0          phase        -1.22148
+...        ...          ... ...       ...            ...             ...
+ L1 1167611684    618164062 ...       0.0          phase         1.01182
+ L1 1167611687    205565929 ...       0.0          phase        -2.57444
+ L1 1167611689    680664062 ...       0.0          phase         1.37387
+ L1 1167611690    294188976 ...       0.0          phase         -2.2331
+ L1 1167611693    606933116 ...       0.0          phase        -0.47045
+ L1 1167611696    500000000 ...       0.0          phase          -2.001
+ L1 1167611700    250304937 ...       0.0          phase         1.39252
+Length = 35691 rows
 
 **References:**
 
-- :all:`gwpy-table-io`
+- :any:`gwpy-table-io`
 
 ================
 Searching tables
@@ -124,6 +143,13 @@ To sort by signal-to-noise ratio (SNR)::
 This sorts the table **in-place** (meaning your `events` objects is changed directly) by SNR in increasing order, so to print the loudest 5 events::
 
    >>> print(events[-5:])
+   ifo peak_time  peak_time_ns ... chisq_dof param_one_name param_one_value
+   --- ---------- ------------ ... --------- -------------- ---------------
+    L1 1126246455    648437023 ...       0.0          phase         2.32888
+    L1 1126239294    367187023 ...       0.0          phase        -2.15407
+    L1 1126246921    683288097 ...       0.0          phase        -0.47281
+    L1 1126246475    398437023 ...       0.0          phase        -2.00041
+    L1 1126243710    883300065 ...       0.0          phase        -1.58589
 
 Filtering
 ---------
@@ -185,15 +211,17 @@ We can clean up the figure as we have done when plotting time-domain data:
 
 .. plot::
    :include-source:
-   :context:
+   :context: close-figs
 
+   >>> plot = events.plot('time', 'peak_frequency', color='snr')
    >>> ax = plot.gca()
+   >>> ax.set_xlim(1167523218, 1167609618)
+   >>> ax.set_epoch(1167523218)
    >>> ax.set_yscale('log')
    >>> ax.set_ylim(30, 2000)
-   >>> ax.set_xlim('Sep 14 2015', 'Sep 15 2015')
-   >>> ax.set_epoch('Se 14 2015')
+   >>> ax.set_ylabel('Frequency [Hz]')
    >>> plot.add_colorbar(cmap='YlGnBu', log=True, clim=[3, 100], label='Signal-to-noise ratio (SNR)')
-   >>> plot.refresh()
+   >>> plot.show()
 
 Tiles
 -----
@@ -208,19 +236,19 @@ Many of the burst event generators output 2-dimensional time-frequency tiles, th
    >>> ax = plot.gca()
    >>> ax.set_yscale('log')
    >>> ax.set_ylim(30, 2000)
-   >>> ax.set_xlim('Sep 14 2015', 'Sep 15 2015')
-   >>> ax.set_epoch('Se 14 2015')
+   >>> ax.set_xlim(1167523218, 1167609618)
+   >>> ax.set_epoch(1167523218)
    >>> plot.add_colorbar(cmap='YlGnBu', log=True, clim=[3, 100], label='Signal-to-noise ratio (SNR)')
-   >>> plot.refresh()
+   >>> plot.show()
 
-This isn't particularly illuminating over such a long time interval, but we can zoom in around a specific time to see much more structure:
+This isn't particularly illuminating over such a long time interval, but we can zoom in around a specific time:
 
 .. plot::
    :include-source:
    :context:
 
-   >>> ax.set_xlim(1126259460, 1126259464)
-   >>> ax.set_epoch(1126259460)
+   >>> ax.set_xlim(1167559934, 1167559938)
+   >>> ax.set_epoch(1167559934)
    >>> plot.refresh()
 
 Unfortunately, the Omicron clustering means that much of the rich structure is clustered away, but we can still see a series of clusters indicating something loud in the data.
@@ -231,15 +259,21 @@ We can repeat the procedure above with the un-clustered Omicron ROOT files to se
    :include-source:
    :context: close-figs
 
-   >>> files = find_trigger_files('L1:GDS-CALIB_STRAIN', 'omicron', 1126259460, 1126259464, ext='root')
+   >>> files = find_trigger_files('L1:GDS-CALIB_STRAIN', 'omicron', 1167559934, 1167559938, ext='root')
    >>> tiles = EventTable.read(files, treename='triggers', format='root')
+   >>> duration = tiles['tend'] - tiles['tstart']
+   >>> duration.name = 'duration'
+   >>> bandwidth = tiles['fend'] - tiles['fstart']
+   >>> bandwidth.name = 'bandwidth'
+   >>> tiles.add_columns((duration, bandwidth))
    >>> plot = tiles.plot('time', 'frequency', 'duration', 'bandwidth', color='snr')
    >>> ax = plot.gca()
-   >>> ax.set_xlim(1126259460, 1126259464)
-   >>> ax.set_epoch(1126259460)
+   >>> ax.set_xlim(1167559936.5, 1167559936.7)
+   >>> ax.set_epoch(1167559936.5)
    >>> ax.set_yscale('log')
-   >>> ax.set_ylim(30, 2000)
-   >>> plot.add_colorbar(cmap='YlGnBu', log=True, clim=[3, 100], label='Signal-to-noise ratio (SNR)')
+   >>> ax.set_ylim(50, 500)
+   >>> ax.set_ylabel('Frequency [Hz]')
+   >>> plot.add_colorbar(cmap='YlGnBu', clim=[5, 8], label='Signal-to-noise ratio (SNR)')
    >>> plot.show()
 
 Histogram
@@ -251,7 +285,11 @@ We can easily make a histogram plot of any `EventTable` by calling the :meth:`~E
    :include-source:
    :context: close-figs
 
-   >>> hist = events.hist('peak_frequency')
+   >>> hist = events.hist('peak_frequency', figsize=[12, 6], bins=200, logbins=True)
+   >>> ax = hist.gca()
+   >>> ax.set_xlabel('Frequency [Hz]')
+   >>> ax.set_ylim(30, 2000)
+   >>> ax.set_ylabel('Number of events')
    >>> hist.show()
 
 Another table type: PyCBC
@@ -265,13 +303,14 @@ For example, using PyCBC Live events:
    :context: close-figs
 
    >>> files = find_trigger_files('L1', 'pycbc_live', 1167523218, 1167609618)
-   >>> t = EventTable.read(files, format='hdf5.pycbc_live', columns=['end_time', 'template_duration', 'new_snr'])
-   >>> plot = t.plot('time', 'template_duration', color='new_snr')
+   >>> t = EventTable.read(files, format='hdf5.pycbc_live', columns=['end_time', 'template_duration', 'new_snr'], ifo='L1', nproc=8)
+   >>> plot = t.plot('end_time', 'template_duration', color='new_snr')
    >>> ax = plot.gca()
    >>> ax.set_xlim(1167523218, 1167609618)
    >>> ax.set_epoch(1167523218)
    >>> ax.set_yscale('log')
    >>> ax.set_ylim(.1, 100)
+   >>> ax.set_ylabel('Template duration [s]')
    >>> plot.add_colorbar(cmap='YlGnBu', clim=[6, 10], label='$\chi^2$-weighted SNR')
    >>> plot.show()
 
@@ -279,10 +318,10 @@ For example, using PyCBC Live events:
 
    The ``'new_snr'`` column is not directly stored in the PyCBC Live files,
    but is derived on-the-fly from other columns.
-   This can also be done for ``'mchirp'``, see :any:`table-io-pycbc_live` for
+   This can also be done for ``'mchirp'``, see :any:`gwpy-table-io-pycbc_live` for
    more details.
 
 **References:**
 
-- :all:`gwpy-table-plot`
+- :any:`gwpy-table-plot`
 
