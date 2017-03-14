@@ -172,5 +172,4 @@ pseudoxml:
 	@echo "Build finished. The pseudo-XML files are in $(BUILDDIR)/pseudoxml."
 
 trigfind.inv:
-	ecp-cookie-init -k https://ldas-jobs.ligo.caltech.edu/~duncan.macleod/trigfind/latest/objects.inv
-	mv objects.inv trigfind.inv
+	ecp-cookie-init -k https://ldas-jobs.ligo.caltech.edu/~duncan.macleod/trigfind/latest/objects.inv > trigfind.inv
