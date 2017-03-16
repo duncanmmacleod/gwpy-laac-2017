@@ -39,33 +39,33 @@ GWpy provides methods to access real interferometer data from a number of source
    TimeSeries.read
    TimeSeries.fetch_open_data
 
-In particular :meth:`TimeSeries.get` takes in a data channel name, and query start time, and a query end time, and will try to get the data for you, either from local frames (if available) (calling to :meth:`~TimeSeries.find`) or via NDS2 (:meth:`~TimeSeries.fetch`)::
+In particular :func:`TimeSeries.get` takes in a data channel name, and query start time, and a query end time, and will try to get the data for you, either from local frames (if available) (calling to :func:`~TimeSeries.find`) or via NDS2 (:func:`~TimeSeries.fetch`)::
 
-   >>> h1data = TimeSeries.get('H1:GDS-CALIB_STRAIN', 1126259446, 1126259478)
+   >>> h1data = TimeSeries.get('H1:GDS-CALIB_STRAIN', 1167559920, 1167559952)
 
 .. plot::
-   :context:
    :include-source: False
+   :context:
    :nofigs:
 
-   >>> h1data = TimeSeries.fetch_open_data('H1', 1126259446, 1126259478, sample_rate=16384)
+   >>> h1data = TimeSeries.get('H1:GDS-CALIB_STRAIN', 1167559920, 1167559952, frametype='H1_HOFT_C00', nproc=4)
 
 .. note::
 
    Members of the public can use `LOSC <https://losc.ligo.org/>`_ to access released data::
 
-   >>> h1data = TimeSeries.fetch_open_data('H1:GDS-CALIB_STRAIN', 1126259446, 1126259478)
+   >>> h1data = TimeSeries.fetch_open_data('H1', 1167559920, 1167559952)
 
-   :meth:`TimeSeries.fetch_open_data` accesses LOSC's 4096 Hz downsampled *h(t)* by default, but you can ask for the full rate by specifying ``sample_rate=16384``
+   :func:`TimeSeries.fetch_open_data` accesses LOSC's 4096 Hz downsampled *h(t)* by default, but you can ask for the full rate by specifying ``sample_rate=16384``
 
 The above :meth:`~TimeSeries.get` should return a TimeSeries that looks like::
 
    >>> print(h1data)
-   TimeSeries([  3.02234488e-19,  3.17519543e-19,  3.01329537e-19,
-               ...,  -1.33666536e-19, -1.38777172e-19,
-                -1.31856806e-19]
+   TimeSeries([  1.75460158e-17,  1.74706549e-17,  1.75265670e-17,
+               ...,  -3.16620973e-19, -2.19630155e-19,
+                -2.08645940e-19]
               unit: Unit(dimensionless),
-              t0: 1126259446.0 s,
+              t0: 1167559920.0 s,
               dt: 6.103515625e-05 s,
               name: H1:GDS-CALIB_STRAIN,
               channel: H1:GDS-CALIB_STRAIN)
@@ -141,7 +141,7 @@ The result should be something like::
                    unit: Unit("1 / Hz(1/2)"),
                    f0: 0.0 Hz,
                    df: 0.25 Hz,
-                   epoch: 1126259446.0,
+                   epoch: 1167559920.0,
                    name: H1:GDS-CALIB_STRAIN,
                    channel: H1:GDS-CALIB_STRAIN)
 
@@ -154,26 +154,29 @@ Now we can :meth:`~gwpy.frequencyseries.FrequencySeries.plot` the ASD:
    >>> plot = h1asd.plot(color='#ee0000', label='LIGO-Hanford')
    >>> ax = plot.gca()
    >>> ax.set_xlim(8, 2048)
-   >>> ax.set_ylim(5e-24, 1e-20)
+   >>> ax.set_ylim(1e-24, 1e-20)
    >>> ax.set_ylabel(r'ASD [strain/\rtHz]')
    >>> plot.show()
 
 We can easily download, transform, and add the LIGO-Livingston data to this figure as well::
 
-   >>> l1data = TimeSeries.get('L1:LDAS-STRAIN', 1126259446, 1126259478)
+   >>> l1data = TimeSeries.get('L1:GDS-CALIB_STRAIN', 1167559920, 1167559952)
    >>> l1asd = l1data.asd(4, 2)
    >>> ax.plot(l1asd, color='#4ba6ff', label='LIGO-Livingston')
    >>> ax.legend()
+   >>> plot.refresh()
 
 .. plot::
    :include-source: False
    :context:
 
-   >>> l1data = TimeSeries.fetch_open_data('L1', 1126259446, 1126259478, sample_rate=16384)
+   >>> l1data = TimeSeries.get('L1:GDS-CALIB_STRAIN', 1167559920, 1167559952, frametype='L1_HOFT_C00', nproc=4)
    >>> l1asd = l1data.asd(4, 2)
    >>> ax.plot(l1asd, color='#4ba6ff', label='LIGO-Livingston')
    >>> ax.legend()
    >>> plot.refresh()
+
+
 
 ==============
 Filtering data
@@ -189,8 +192,8 @@ We start by band-passing the data to remove the lowest and highest frequencies, 
    :context: close-figs
    :nofigs:
 
-   >>> h1bp = h1data.bandpass(50, 250, filtfilt=True)
-   >>> l1bp = l1data.bandpass(50, 250, filtfilt=True)
+   >>> h1bp = h1data.bandpass(50, 290, filtfilt=True)
+   >>> l1bp = l1data.bandpass(50, 290, filtfilt=True)
 
 Here ``filtfilt=True`` is given to filter forward and backward, preserving the phase of each signal.
 By default :meth:`~TimeSeries.bandpass` uses `IIR filtering <https://en.wikipedia.org/wiki/Infinite_impulse_response>`_, which takes a small time to settle, so we crop out the first second of the resulting data:
@@ -200,8 +203,8 @@ By default :meth:`~TimeSeries.bandpass` uses `IIR filtering <https://en.wikipedi
    :context:
    :nofigs:
 
-   >>> h1bp = h1bp.crop(start=1126259447, end=1126259477)
-   >>> l1bp = l1bp.crop(start=1126259447, end=1126259477)
+   >>> h1bp = h1bp.crop(start=1167559921, end=1167559951)
+   >>> l1bp = l1bp.crop(start=1167559921, end=1167559951)
 
 We can plot these two new `TimeSeries` separately to see what we have done:
 
@@ -214,7 +217,7 @@ We can plot these two new `TimeSeries` separately to see what we have done:
    >>> plot.add_timeseries(l1bp, color='#4ba6ff', newax=True)
    >>> plot.show()
 
-Here we can now see a feature around 15.5-seconds into the data for each interferometer.
+Even with this bandpass, we can't really see anything in the data for either interferometer.
 
 We can further clean our data by notching out the 60 Hz power-line harmonics:
 
@@ -237,7 +240,8 @@ And again make a plot to see what we have done:
    >>> plot.add_timeseries(l1clean, color='#4ba6ff', newax=True)
    >>> plot.show()
 
-We see that the feature we saw previously is now more prominent.
+We can now see a peak around 15.5 seconds into the data for each interferometer.
+
 We can now easily zoom into see what we have found:
 
 .. plot::
@@ -245,8 +249,8 @@ We can now easily zoom into see what we have found:
    :context:
 
    >>> for ax in plot.axes:
-   >>>     ax.set_xlim(1126259462.2, 1126259462.6)
-   >>>     ax.set_epoch(1126259462.427)
+   >>>     ax.set_xlim(1167559936.4, 1167559936.7)
+   >>>     ax.set_epoch(1167559936.59)
    >>> plot.refresh()
 
 We can try and overlay our two cleaned `TimeSeries` to see if the signals match between interferometers:
@@ -255,20 +259,20 @@ We can try and overlay our two cleaned `TimeSeries` to see if the signals match 
    :include-source:
    :context: close-figs
 
-   >>> h1clean.x0 = h1clean.x0 - 0.0078 * h1clean.x0.unit
+   >>> l1clean.x0 = l1clean.x0 - 0.0029 * l1clean.x0.unit
    >>> l1clean *= -1 * l1clean.unit
    >>> plot = h1clean.plot(label='LIGO-Hanford', color='#ee0000')
    >>> ax = plot.gca()
    >>> ax.plot(l1clean, label='LIGO-Livingston', color='#4ba6ff')
-   >>> ax.set_xlim(1126259462.2, 1126259462.6)
-   >>> ax.set_epoch(1126259462.427)
+   >>> ax.set_xlim(1167559936.4, 1167559936.7)
+   >>> ax.set_epoch(1167559936.59)
    >>> ax.set_ylabel('Amplitude [strain]')
    >>> ax.legend()
    >>> plot.show()
 
 **References:**
 
-- :any:`gwpy-signal-time-domain-filter`
+- :any:`gwpy-signal-processing`
 
 =======================
 Generating Q-transforms
@@ -281,14 +285,14 @@ We can apply this transform to each of our original `TimeSeries` to generate Q-t
    :include-source:
    :context: close-figs
 
-   >>> h1q = h1data.q_transform().crop(1126259462.31, 1126259462.45)
-   >>> l1q = l1data.q_transform().crop(1126259462.31, 1126259462.45)
+   >>> h1q = h1data.q_transform().crop(1167559936.48, 1167559936.62)
+   >>> l1q = l1data.q_transform().crop(1167559936.48, 1167559936.62)
    >>> plot = h1q.plot()
    >>> plot.add_spectrogram(l1q, newax=True)
    >>> for ax in plot.axes:
    >>>     ax.set_yscale('log')
    >>>     ax.set_ylim(20, 500)
-   >>>     plot.add_colorbar(ax=ax, cmap='viridis', clim=[0, 80], label='Normalized energy')
+   >>>     plot.add_colorbar(ax=ax, cmap='viridis', clim=[0, 25], label='Normalized energy')
    >>> plot.show()
 
 For a presentation, or publication, a nice view is to show the (cleaned) data and the Q-transform spectrogram in a single figure, as follows.
@@ -325,9 +329,9 @@ and do the same for the Q-transforms:
    :nofigs:
 
    >>> hax2 = pyplot.subplot(grid[1:, 0], projection='timeseries')
-   >>> hax2.plot(h1q, cmap='Reds_r', vmin=0, vmax=80)
+   >>> hax2.plot(h1q, cmap='Reds_r', vmin=0, vmax=25)
    >>> lax2 = pyplot.subplot(grid[1:, 1], projection='timeseries')
-   >>> lax2.plot(l1q, cmap='Blues_r', vmin=0, vmax=80)
+   >>> lax2.plot(l1q, cmap='Blues_r', vmin=0, vmax=25)
 
 Finally, we clean up the figure:
 
@@ -336,10 +340,10 @@ Finally, we clean up the figure:
    :context:
 
    >>> for ax in plot.axes:
-   >>>     ax.set_xlim(1126259462.31, 1126259462.45)
-   >>>     ax.set_epoch(1126259462.42)
+   >>>     ax.set_xlim(1167559936.48, 1167559936.62)
+   >>>     ax.set_epoch(1167559936.59)
    >>> for ax in (hax1, lax1):
-   >>>     ax.set_ylim(-1e-21, 1e-21)
+   >>>     ax.set_ylim(-.7e-21, .7e-21)
    >>>     ax.set_xlabel('')
    >>> for ax in (hax2, lax2):
    >>>     ax.set_xlabel('Time [milliseconds]')

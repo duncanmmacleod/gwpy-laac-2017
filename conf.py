@@ -281,13 +281,8 @@ texinfo_documents = [
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
     'python': ('https://docs.python.org/', None),
-    'numpy': ('https://docs.scipy.org/doc/numpy/', None),
-    'scipy': ('https://docs.scipy.org/doc/scipy/reference/', None),
     'matplotlib': ('http://matplotlib.org/', None),
     'astropy': ('http://docs.astropy.org/en/stable/', None),
-    'pycbc': ('https://ligo-cbc.github.io/pycbc/latest/html/', None),
-    'root_numpy': ('https://rootpy.github.io/root_numpy/', None),
-    'h5py': ('http://docs.h5py.org/en/latest/', None),
     'gwpy': ('https://gwpy.github.io/docs/latest/', None),
     'trigfind': ('https://ldas-jobs.ligo.caltech.edu/~duncan.macleod/trigfind/latest/', 'trigfind.inv'),
 }
